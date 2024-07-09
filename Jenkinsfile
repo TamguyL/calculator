@@ -28,7 +28,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("your-dockerhub-username/your-repo:${env.BUILD_ID}")
+                    docker.build("tamgylb/calcul:${env.BUILD_ID}")
                 }
             }
         }
