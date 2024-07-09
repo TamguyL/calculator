@@ -2,47 +2,42 @@ pipeline {
     agent any
 
     environment {
-        // Define environment variables if needed
-        DOCKER_IMAGE = "myapp"
-        DOCKER_TAG = "latest"
+        DOCKERHUB_CREDENTIALS = credentials('dockercred')
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the source code from your repository
-                git 'https://github.com/TamguyL/calculator.git'
+                git branch: 'main', url:'https://github.com/TamguyL/calculator.git', credentialsId: 'TamgyLB'
             }
         }
 
         stage('Build') {
             steps {
-                script {
-                    // Build the Docker image
-                    sh 'chmod +x ./mvnw'
-                    sh './mvnw clean package'
-                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                }
+                sh 'chmod +x ./mvnw'
+                sh './mvnw clean package'
             }
         }
 
         stage('Test') {
             steps {
+                sh './mvnw test'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
                 script {
-                    // Run your tests here
-                    // For example, you could run a container from the built image and execute tests inside it
-                    sh "docker run --rm ${DOCKER_IMAGE}:${DOCKER_TAG} bash ./mvnw test"
+                    docker.build("tamgylb/calcul:${env.BUILD_ID}")
                 }
             }
         }
 
-        stage('Push') {
+        stage('Push Docker Image') {
             steps {
                 script {
-                    // Use Docker credentials to log in and push the image
-                    withCredentials([usernamePassword(credentialsId: 'dockercred', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
-                        sh "echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin"
-                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockercred') {
+                        docker.image("tamgylb/calcul:${env.BUILD_ID}").push()
                     }
                 }
             }
@@ -51,10 +46,7 @@ pipeline {
 
     post {
         always {
-            // Cleanup
-            script {
-                sh "docker rmi ${DOCKER_IMAGE}:${DOCKER_TAG}"
-            }
+            junit 'target/surefire-reports/*.xml'
         }
     }
 }
