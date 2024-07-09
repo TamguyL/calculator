@@ -6,9 +6,9 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
-                git url: 'https://github.com/TamguyL/calculator.git'
+                git branch: 'main', url:'https://github.com/TamguyL/calculator.git', credentialsId: 'TamgyLB'
             }
         }
 
