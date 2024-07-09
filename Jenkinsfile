@@ -1,13 +1,8 @@
 pipeline {
     agent any
 
-    tools {
-        // Assure-toi que Maven est installé et configuré dans Jenkins
-        maven 'Maven 3.6.3'
-    }
-
     stages {
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
                 // Checkout the code from the repository
                 git 'https://github.com/TamguyL/calculator.git'
