@@ -5,7 +5,9 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the code from the repository
+                git branch: 'main',
                 git 'https://github.com/TamguyL/calculator.git'
+                credentialsId: 'TamgyLB'
             }
         }
 
