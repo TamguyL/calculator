@@ -6,6 +6,9 @@ pipeline {
         DOCKER_IMAGE = "myapp"
         DOCKER_TAG = "latest"
     }
+    tools {
+        jdk 'JDK 17'
+    }
 
     stages {
         stage('Checkout') {
