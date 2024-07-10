@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Define environment variables if needed
-        DOCKER_IMAGE = "myapp"
+        DOCKER_IMAGE = "calcul"
         DOCKER_TAG = "latest"
     }
 
@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the source code from your repository
-                git 'https://github.com/TamguyL/calculator.git'
+                git branch: 'main', url:'https://github.com/TamguyL/calculator.git', credentialsId: 'TamgyLB'
             }
         }
 
